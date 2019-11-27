@@ -45,15 +45,17 @@ class MelFromDisk(Dataset):
 
     def my_getitem(self, idx):
         wavpath = self.wav_list[idx]
-        melpath = wavpath.replace('.wav', '.npy')
         audio, sr = librosa.core.load(wavpath, self.hp.audio.sampling_rate)
+
+        melpath = wavpath.replace('.wav', '.npy')
+        mel = np.load(melpath)
+
+        if len(audio) < self.hp.audio.segment_length + self.hp.audio.pad_short:
+            mel = np.pad(mel, ((0, 0), (0, self.mel_segment_length + self.mel_pad_short - mel.shape[1])), mode='constant', constant_values=-self.hp.audio.mel_bias)
+            audio = np.pad(audio, (0, self.hp.audio.segment_length + self.hp.audio.pad_short - len(audio)), mode='constant', constant_values=0.0)
+
         audio = torch.from_numpy(audio).unsqueeze(0)
-        mel = torch.from_numpy(np.load(melpath))
-
-        if audio.size(1) < self.hp.audio.segment_length + self.hp.audio.pad_short:
-            mel = np.pad(mel, ((0, 0), (0, self.mel_segment_length + self.mel_pad_short - mel.size(1))), mode='constant', constant_values=-self.hp.audio.mel_bias)
-            audio = np.pad(audio, ((0, 0), (0, self.hp.audio.segment_length + self.hp.audio.pad_short - audio.size(1))), mode='constant', constant_values=0.0)
-
+        mel = torch.from_numpy(mel)
         assert(self.hp.audio.hop_length * mel.size(1) == audio.size(1))
 
         if self.train:
