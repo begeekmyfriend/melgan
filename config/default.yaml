@@ -1,11 +1,11 @@
 data: # root path of train/validation data (either relative/absoulte path is ok)
-  train: ''
-  validation: ''
+  train: 'training_data'
+  validation: 'training_data'
 ---
 train:
   rep_discriminator: 1
-  num_workers: 32
-  batch_size: 16
+  num_workers: 1 
+  batch_size: 64
   optimizer: 'adam'
   adam:
     lr: 0.0001
@@ -13,15 +13,16 @@ train:
     beta2: 0.9
 ---
 audio:
+  mel_bias: 5.0
   n_mel_channels: 80
-  segment_length: 16000
-  pad_short: 2000
+  segment_length: 15360 # 256 * 60
+  pad_short: 1024 # 256 * 4
   filter_length: 1024
   hop_length: 256 # WARNING: this can't be changed.
   win_length: 1024
   sampling_rate: 22050
-  mel_fmin: 0.0
-  mel_fmax: 8000.0
+  mel_fmin: 50.0
+  mel_fmax: 7600.0
 ---
 model:
   feat_match: 10.0

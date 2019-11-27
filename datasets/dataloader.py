@@ -2,10 +2,9 @@ import os
 import glob
 import torch
 import random
+import librosa
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-
-from utils.utils import read_wav_np
 
 
 def create_dataloader(hp, args, train):
@@ -26,7 +25,8 @@ class MelFromDisk(Dataset):
         self.train = train
         self.path = hp.data.train if train else hp.data.validation
         self.wav_list = glob.glob(os.path.join(self.path, '**', '*.wav'), recursive=True)
-        self.mel_segment_length = hp.audio.segment_length // hp.audio.hop_length + 2
+        self.mel_segment_length = hp.audio.segment_length // hp.audio.hop_length
+        self.mel_pad_short = hp.audio.pad_short // hp.audio.hop_length
         self.mapping = [i for i in range(len(self.wav_list))]
 
     def __len__(self):
@@ -45,17 +45,20 @@ class MelFromDisk(Dataset):
 
     def my_getitem(self, idx):
         wavpath = self.wav_list[idx]
-        melpath = wavpath.replace('.wav', '.mel')
-        sr, audio = read_wav_np(wavpath)
-        if len(audio) < self.hp.audio.segment_length + self.hp.audio.pad_short:
-            audio = np.pad(audio, (0, self.hp.audio.segment_length + self.hp.audio.pad_short - len(audio)), \
-                    mode='constant', constant_values=0.0)
-
+        melpath = wavpath.replace('.wav', '.npy')
+        audio, sr = librosa.core.load(wavpath, self.hp.audio.sampling_rate)
         audio = torch.from_numpy(audio).unsqueeze(0)
-        mel = torch.load(melpath).squeeze(0)
+        mel = torch.from_numpy(np.load(melpath))
+
+        if audio.size(1) < self.hp.audio.segment_length + self.hp.audio.pad_short:
+            mel = np.pad(mel, ((0, 0), (0, self.mel_segment_length + self.mel_pad_short - mel.size(1))), mode='constant', constant_values=-self.hp.audio.mel_bias)
+            audio = np.pad(audio, ((0, 0), (0, self.hp.audio.segment_length + self.hp.audio.pad_short - audio.size(1))), mode='constant', constant_values=0.0)
+
+        assert(self.hp.audio.hop_length * mel.size(1) == audio.size(1))
 
         if self.train:
             max_mel_start = mel.size(1) - self.mel_segment_length
+            assert(max_mel_start > 0)
             mel_start = random.randint(0, max_mel_start)
             mel_end = mel_start + self.mel_segment_length
             mel = mel[:, mel_start:mel_end]

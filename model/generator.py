@@ -9,9 +9,10 @@ MAX_WAV_VALUE = 32768.0
 
 
 class Generator(nn.Module):
-    def __init__(self, mel_channel):
+    def __init__(self, mel_channel, mel_bias):
         super(Generator, self).__init__()
         self.mel_channel = mel_channel
+        self.mel_bias = mel_bias
 
         self.generator = nn.Sequential(
             nn.utils.weight_norm(nn.Conv1d(mel_channel, 512, kernel_size=7, stride=1, padding=3)),
@@ -42,8 +43,7 @@ class Generator(nn.Module):
         )
 
     def forward(self, mel):
-        mel = (mel + 5.0) / 5.0 # roughly normalize spectrogram
-        return self.generator(mel)
+        return self.generator(mel + self.mel_bias)
 
     def eval(self, inference=False):
         super(Generator, self).eval()

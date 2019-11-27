@@ -11,11 +11,11 @@ from datasets.dataloader import create_dataloader
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, required=True,
+    parser.add_argument('-c', '--config', type=str, default='config/default.yaml',
                         help="yaml file for configuration")
     parser.add_argument('-p', '--checkpoint_path', type=str, default=None,
                         help="path of checkpoint pt file to resume training")
-    parser.add_argument('-n', '--name', type=str, required=True,
+    parser.add_argument('-n', '--name', type=str, default='',
                         help="name of the model for logging, saving checkpoint")
     args = parser.parse_args()
 
@@ -47,6 +47,6 @@ if __name__ == '__main__':
         'hp.data.train and hp.data.validation can\'t be empty: please fix %s' % args.config
 
     trainloader = create_dataloader(hp, args, True)
-    valloader = create_dataloader(hp, args, False)
+    valloader = None
 
     train(args, pt_dir, args.checkpoint_path, trainloader, valloader, writer, logger, hp, hp_str)
