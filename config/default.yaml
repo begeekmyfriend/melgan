@@ -30,6 +30,6 @@ model:
 log:
   summary_interval: 1
   validation_interval: 5
-  save_interval: 25
+  save_interval: 10
   chkpt_dir: 'chkpt'
   log_dir: 'logs'
