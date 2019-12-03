@@ -4,7 +4,7 @@ data: # root path of train/validation data (either relative/absoulte path is ok)
 ---
 train:
   rep_discriminator: 1
-  num_workers: 1 
+  num_workers: 8
   batch_size: 64
   optimizer: 'adam'
   adam:
