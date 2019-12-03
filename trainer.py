@@ -2,11 +2,13 @@ import os
 import time
 import logging
 import argparse
-
 from utils.train import train
 from utils.hparams import HParam
 from utils.writer import MyWriter
 from datasets.dataloader import create_dataloader
+
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 if __name__ == '__main__':
