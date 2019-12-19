@@ -72,7 +72,7 @@ def train(args, pt_dir, chkpt_path, trainloader, valloader, writer, logger, hp, 
         model_d.train()
 
         epochs = hp.train.epochs - elapsed_epochs
-        for epoch in range(-1, epochs):
+        for epoch in range(epochs):
             # if epoch % hp.log.validation_interval == 0:
             #     with torch.no_grad():
             #         validate(hp, args, model_g, model_d, valloader, writer, step)

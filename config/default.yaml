@@ -7,7 +7,7 @@ train:
   num_workers: 48
   batch_size: 64
   optimizer: 'adam'
-  epochs: 1000
+  epochs: 800
   adam:
     init_lr: 0.0001
     final_lr: 0.00001
