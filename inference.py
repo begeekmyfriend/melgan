@@ -20,7 +20,7 @@ def main(args):
 
     model = Generator(hp.audio.n_mel_channels, hp.audio.mel_bias).cuda()
     model.load_state_dict(checkpoint['model_g'])
-    model.eval(inference=False)
+    model.eval()
 
     with torch.no_grad():
         for melpath in tqdm.tqdm(glob.glob(os.path.join(args.input_folder, '*.npy'))):
@@ -30,7 +30,7 @@ def main(args):
             mel = mel.cuda()
 
             audio = model.inference(mel)
-            audio = audio.cpu().detach().numpy()
+            audio = audio.cpu().numpy()
 
             out_path = melpath.replace('.npy', '_reconstructed_epoch%04d.wav' % checkpoint['epoch'])
             write(out_path, hp.audio.sampling_rate, audio)
