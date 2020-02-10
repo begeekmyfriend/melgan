@@ -5,9 +5,9 @@ data: # root path of train/validation data (either relative/absoulte path is ok)
 train:
   rep_discriminator: 1
   num_workers: 48
-  batch_size: 64
+  batch_size: 48
   optimizer: 'adam'
-  epochs: 800
+  epochs: 4000
   adam:
     init_lr: 0.0001
     final_lr: 0.00001
@@ -17,7 +17,7 @@ train:
 audio:
   mel_bias: 7.0
   n_mel_channels: 80
-  segment_length: 15360 # 256 * 60
+  segment_length: 20480 # 256 * 60
   pad_short: 1024 # 256 * 4
   filter_length: 1024
   hop_length: 256 # WARNING: this can't be changed.
@@ -32,6 +32,6 @@ model:
 log:
   summary_interval: 1
   validation_interval: 5
-  save_interval: 25
+  save_interval: 500
   chkpt_dir: 'chkpt'
   log_dir: 'logs'

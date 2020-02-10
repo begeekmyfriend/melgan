@@ -72,7 +72,7 @@ def train(args, pt_dir, chkpt_path, trainloader, valloader, writer, logger, hp, 
         model_d.train()
 
         epochs = hp.train.epochs - elapsed_epochs
-        for epoch in range(epochs + 1):
+        for epoch in range(1, epochs + 1):
             # if epoch % hp.log.validation_interval == 0:
             #     with torch.no_grad():
             #         validate(hp, args, model_g, model_d, valloader, writer, step)
@@ -134,6 +134,11 @@ def train(args, pt_dir, chkpt_path, trainloader, valloader, writer, logger, hp, 
                     loader.set_description("g %.04f d %.04f | step %d" % (loss_g, loss_d_avg, step))
 
             if epoch % hp.log.save_interval == 0:
+                last_chkpt = os.path.join(pt_dir, '%s_%s_%04d.pt'
+                    % (args.name, githash, epoch - 1))
+                if os.path.exists(last_chkpt):
+                    os.remove(last_chkpt)
+
                 save_path = os.path.join(pt_dir, '%s_%s_%04d.pt'
                     % (args.name, githash, epoch))
                 torch.save({
