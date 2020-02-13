@@ -4,6 +4,7 @@ import tqdm
 import torch
 import argparse
 import numpy as np
+from apex import amp
 from scipy.io.wavfile import write
 from model.generator import Generator
 from utils.hparams import HParam, load_hparam_str
@@ -21,6 +22,8 @@ def main(args):
     model = Generator(hp.audio.n_mel_channels, hp.audio.mel_bias).cuda()
     model.load_state_dict(checkpoint['model_g'])
     model.eval()
+    if hp.train.amp:
+        model, _ = amp.initialize(model, [], opt_level=hp.amp_level)
 
     with torch.no_grad():
         for melpath in tqdm.tqdm(glob.glob(os.path.join(args.input_folder, '*.npy'))):
