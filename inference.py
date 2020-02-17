@@ -9,7 +9,26 @@ from scipy.io.wavfile import write
 from model.generator import Generator
 from utils.hparams import HParam, load_hparam_str
 
+
 MAX_WAV_VALUE = 32768.0
+
+def label_2_float(x, bits):
+    return 2 * x / (2 ** bits - 1.) - 1.
+
+def float_2_label(x, bits) :
+    assert abs(x).max() <= 1.0
+    x = (x + 1.) * (2 ** bits - 1) / 2
+    return x.clip(0, 2 ** bits - 1)
+
+def encode_mu_law(x, mu):
+    mu = mu - 1
+    fx = np.sign(x) * np.log(1 + mu * np.abs(x)) / np.log(1 + mu)
+    return np.floor((fx + 1) / 2 * mu + 0.5)
+
+def decode_mu_law(y, mu):
+    mu = mu - 1
+    x = np.sign(y) / mu * ((1 + mu) ** np.abs(y) - 1)
+    return x
 
 
 def main(args):
@@ -34,6 +53,9 @@ def main(args):
 
             audio = model.inference(mel)
             audio = audio.cpu().numpy()
+
+            audio = float_2_label(audio, bits=hp.audio.bits)
+            audio = decode_mu_law(audio, mu=2 ** hp.audio.bits)
 
             out_path = melpath.replace('.npy', '_reconstructed_epoch%04d.wav' % checkpoint['epoch'])
             write(out_path, hp.audio.sampling_rate, audio)

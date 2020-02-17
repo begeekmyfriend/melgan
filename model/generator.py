@@ -9,10 +9,9 @@ MAX_WAV_VALUE = 32768.0
 
 
 class Generator(nn.Module):
-    def __init__(self, mel_channel, mel_bias):
+    def __init__(self, mel_channel):
         super(Generator, self).__init__()
         self.mel_channel = mel_channel
-        self.mel_bias = mel_bias
 
         self.generator = nn.Sequential(
             nn.ReflectionPad1d(3),
@@ -45,7 +44,7 @@ class Generator(nn.Module):
         )
 
     def forward(self, mel):
-        return self.generator(mel + self.mel_bias)
+        return self.generator(mel)
 
     def eval(self, inference=False):
         super(Generator, self).eval()

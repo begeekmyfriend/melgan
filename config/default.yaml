@@ -1,6 +1,6 @@
 data: # root path of train/validation data (either relative/absoulte path is ok)
-  train: '/mnt/sdb1/leoma/training_data_mel256'
-  validation: '/mnt/sdb1/leoma/training_data_mel256'
+  train: '/mnt/sdb1/leoma/training_data'
+  validation: '/mnt/sdb1/leoma/training_data'
 ---
 train:
   rep_discriminator: 1
@@ -8,7 +8,7 @@ train:
   batch_size: 48
   optimizer: 'adam'
   epochs: 1000
-  amp: false
+  amp: true
   amp_level: 'O0'
   adam:
     init_lr: 0.0001
@@ -17,16 +17,16 @@ train:
     beta2: 0.9
 ---
 audio:
-  mel_bias: 5.0
-  n_mel_channels: 256
-  segment_length: 20480 # 256 * 60
-  pad_short: 1024 # 256 * 4
+  n_bits: 9
+  n_mel_channels: 80
+  segment_length: 16384 # 256 * 64
   filter_length: 1024
   hop_length: 256 # WARNING: this can't be changed.
   win_length: 1024
   sampling_rate: 22050
   mel_fmin: 50.0
   mel_fmax: 7600.0
+  mel_pad_val: -10.0
 ---
 model:
   feat_match: 10.0

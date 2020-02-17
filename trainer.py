@@ -5,13 +5,11 @@ import argparse
 from utils.train import train
 from utils.hparams import HParam
 from utils.writer import MyWriter
-from datasets.dataloader import create_dataloader
-
-
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+from dataloader import create_dataloader
 
 
 if __name__ == '__main__':
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, default='config/default.yaml',
                         help="yaml file for configuration")

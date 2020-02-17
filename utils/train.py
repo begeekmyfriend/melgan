@@ -30,7 +30,7 @@ def adjust_learning_rate(optimizer, epoch, hp):
 
 
 def train(args, pt_dir, chkpt_path, trainloader, valloader, writer, logger, hp, hp_str):
-    model_g = Generator(hp.audio.n_mel_channels, hp.audio.mel_bias).cuda()
+    model_g = Generator(hp.audio.n_mel_channels).cuda()
     model_d = MultiScaleDiscriminator().cuda()
 
     optim_g = torch.optim.Adam(model_g.parameters(),
