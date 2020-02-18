@@ -42,9 +42,6 @@ class MelFromDisk(Dataset):
     def shuffle_mapping(self):
         random.shuffle(self.mapping)
 
-    def label_2_float(self, x, bits):
-        return 2 * x / (2 ** bits - 1.) - 1.
-
     def my_getitem(self, idx):
         mel = np.load(self.mel_list[idx])
         audio = np.load(self.wav_list[idx])
@@ -59,7 +56,6 @@ class MelFromDisk(Dataset):
 
         if self.train:
             max_mel_start = mel.size(1) - self.mel_segment_length
-            assert(max_mel_start >= 0)
             mel_start = random.randint(0, max_mel_start)
             mel_end = mel_start + self.mel_segment_length
             mel = mel[:, mel_start:mel_end]
@@ -67,4 +63,4 @@ class MelFromDisk(Dataset):
             audio_start = mel_start * self.hp.audio.hop_length
             audio = audio[:, audio_start:audio_start+self.hp.audio.segment_length]
 
-        return mel, self.label_2_float(audio, bits=self.hp.audio.n_bits)
+        return mel, audio
