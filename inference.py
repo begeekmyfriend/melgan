@@ -35,7 +35,8 @@ def main(args):
             audio = model.inference(mel)
             audio = audio.cpu().numpy()
 
-            out_path = melpath.replace('.npy', '_reconstructed_epoch%04d.wav' % checkpoint['epoch'])
+            fname = os.path.splitext(os.path.basename(melpath))[0]
+            out_path = 'melgan_' + fname + '_epoch%04d.wav' % checkpoint['epoch']
             write(out_path, hp.audio.sampling_rate, audio)
 
 

@@ -26,7 +26,7 @@ audio:
   sampling_rate: 22050
   mel_fmin: 50.0
   mel_fmax: 7600.0
-  mel_pad_val: -10.0
+  mel_pad_val: -4.0
 ---
 model:
   feat_match: 10.0
